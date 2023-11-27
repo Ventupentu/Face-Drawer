@@ -6,16 +6,28 @@ import os
 def draw_face(image, circles):
     if circles is not None:
         circles = np.round(circles[0, :]).astype("int")
-        # Draw the eyes (should be half the radius of the circle) (should be green) (should be 50 pixels away from the center of the circle)
-        cv2.circle(image, (circles[0][0] - 50, circles[0][1]), 25, (0, 255, 0), -1)
-        cv2.circle(image, (circles[0][0] + 50, circles[0][1]), 25, (0, 255, 0), -1)
+        radius = circles[0][2]  # Get the radius of the circle
 
-        # Draw the pupils (should be half the radius of the circle) (should be blue)
-        cv2.circle(image, (circles[0][0] - 50, circles[0][1]), 10, (255, 0, 0), -1)
-        cv2.circle(image, (circles[0][0] + 50, circles[0][1]), 10, (255, 0, 0), -1)
+        # Calculate the proportions based on the radius
+        eye_radius = int(radius / 4)
+        eye_offset = int(radius / 2)
+        pupil_radius = int(eye_radius / 2)
+        mouth_offset = int(radius / 4)  # Updated mouth offset
+        mouth_length = int(radius / 2)
         
-        # Draw the mouth (should be green) (should be 50 pixels away from the center of the circle) (should be 50 pixels long) (should be a semicircle)
-        cv2.ellipse(image, (circles[0][0], circles[0][1] + 50), (50, 50), 0, 0, 180, (0, 255, 0), -1)
+        # Calculate the position of the eyes above the center of the circle
+        eye_y = circles[0][1] - int(radius / 4)
+        
+        # Draw the eyes
+        cv2.circle(image, (circles[0][0] - eye_offset, eye_y), eye_radius, (0, 255, 0), -1)
+        cv2.circle(image, (circles[0][0] + eye_offset, eye_y), eye_radius, (0, 255, 0), -1)
+
+        # Draw the pupils
+        cv2.circle(image, (circles[0][0] - eye_offset, eye_y), pupil_radius, (255, 0, 0), -1)
+        cv2.circle(image, (circles[0][0] + eye_offset, eye_y), pupil_radius, (255, 0, 0), -1)
+        
+        # Draw the mouth
+        cv2.ellipse(image, (circles[0][0], circles[0][1] + mouth_offset), (mouth_length, mouth_length), 0, 0, 180, (0, 255, 0), -1)
         
 def process_image(image_name):
     # Load the image
